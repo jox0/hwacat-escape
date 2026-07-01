@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>냥이의 생선을 찾아라 🐟</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700;800&family=Gaegu:wght@400;700&display=swap');
+
+  :root {
+    --cream: #FFF8EF;
+    --peach: #FFD9B7;
+    --orange: #FF8C42;
+    --brown: #6B3F1E;
+    --softbrown: #C4845A;
+    --green: #A8C5A0;
+    --white: #FFFFFF;
+    --shadow: rgba(107,63,30,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+  }
+
+  body {
+    background-color: var(--cream);
+    font-family: 'Nanum Gothic', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 20px 16px 40px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .card {
+    background: var(--white);
+    border-radius: 28px;
+    box-shadow: 0 8px 32px var(--shadow);
+    padding: 36px 24px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 8px;
+    background: linear-gradient(90deg, var(--orange), var(--peach), var(--orange));
+  }
+
+  .cat-emoji {
+    font-size: 72px;
+    margin-bottom: 8px;
+    display: block;
+    animation: bounce 2s infinite ease-in-out;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .title {
+    font-family: 'Gaegu', cursive;
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--brown);
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: var(--softbrown);
+    margin-bottom: 28px;
+    line-height: 1.6;
+  }
+
+  .progress-bar {
+    background: var(--peach);
+    border-radius: 999px;
+    height: 10px;
+    margin-bottom: 6px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--orange), #ffb347);
+    border-radius: 999px;
+    transition: width 0.5s ease;
+  }
+
+  .progress-label {
+    font-size: 12px;
+    color: var(--softbrown);
+    margin-bottom: 24px;
+    text-align: right;
+  }
+
+  .question-number {
+    display: inline-block;
+    background: var(--peach);
+    color: var(--brown);
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 14px;
+    border-radius: 999px;
+    margin-bottom: 14px;
+    letter-spacing: 0.5px;
+  }
+
+  .question-text {
+    font-size: 16px;
+    color: var(--brown);
+    font-weight: 700;
+    line-height: 1.7;
+    margin-bottom: 24px;
+    white-space: pre-line;
+  }
+
+  input[type="text"], input[type="password"] {
+    width: 100%;
+    padding: 16px 18px;
+    border: 2px solid var(--peach);
+    border-radius: 16px;
+    font-size: 16px;
+    font-family: 'Nanum Gothic', sans-serif;
+    color: var(--brown);
+    background: var(--cream);
+    outline: none;
+    transition: border-color 0.2s;
+    text-align: center;
+    letter-spacing: 2px;
+    margin-bottom: 14px;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+
+  input[type="text"]:focus, input[type="password"]:focus {
+    border-color: var(--orange);
+  }
+
+  .btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 16px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Nanum Gothic', sans-serif;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.1s;
+    margin-bottom: 10px;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .btn:active { transform: scale(0.97); }
+
+  .btn-primary {
+    background: var(--orange);
+    color: var(--white);
+    box-shadow: 0 4px 14px rgba(255,140,66,0.35);
+  }
+
+  .btn-primary:hover { box-shadow: 0 6px 20px rgba(255,140,66,0.45); }
+
+  .btn-hint {
+    background: var(--cream);
+    color: var(--softbrown);
+    border: 2px solid var(--peach);
+  }
+
+  .btn-answer {
+    background: var(--green);
+    color: #3d5c38;
+    border: none;
+  }
+
+  .btn-next {
+    background: var(--brown);
+    color: var(--white);
+    box-shadow: 0 4px 14px rgba(107,63,30,0.25);
+  }
+
+  .hint-box {
+    background: #FFF3E0;
+    border: 2px dashed var(--peach);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: var(--brown);
+    line-height: 1.7;
+    text-align: left;
+    display: none;
+  }
+
+  .hint-box.show { display: block; }
+
+  .answer-box {
+    background: #F1F8F0;
+    border: 2px solid var(--green);
+    border-radius: 16px;
+    padding: 16px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #3d5c38;
+    line-height: 1.7;
+    text-align: left;
+    display: none;
+  }
+
+  .answer-box.show { display: block; }
+
+  .answer-box strong {
+    display: block;
+    font-size: 18px;
+    margin-bottom: 6px;
+    color: #2d4a28;
+  }
+
+  .feedback {
+    font-size: 14px;
+    margin-bottom: 12px;
+    font-weight: 700;
+    min-height: 20px;
+  }
+
+  .feedback.wrong { color: #e05c5c; }
+  .feedback.correct { color: #4caf50; }
+
+  .paw-divider {
+    color: var(--peach);
+    font-size: 18px;
+    letter-spacing: 6px;
+    margin: 16px 0;
+  }
+
+  .story-text {
+    font-size: 15px;
+    color: var(--brown);
+    line-height: 1.9;
+    margin-bottom: 24px;
+    white-space: pre-line;
+    background: var(--cream);
+    border-radius: 16px;
+    padding: 18px;
+  }
+
+  .fish-count {
+    display: flex;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    font-size: 22px;
+  }
+
+  .ending-title {
+    font-family: 'Gaegu', cursive;
+    font-size: 30px;
+    color: var(--orange);
+    margin-bottom: 12px;
+  }
+
+  .ending-text {
+    font-size: 14px;
+    color: var(--softbrown);
+    line-height: 1.8;
+    margin-bottom: 24px;
+  }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .paw-stamp {
+    position: absolute;
+    font-size: 24px;
+    opacity: 0.08;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <span class="paw-stamp" style="top:20px;right:20px;transform:rotate(20deg)">🐾</span>
+  <span class="paw-stamp" style="bottom:30px;left:16px;transform:rotate(-15deg)">🐾</span>
+
+  <!-- 시작 화면 -->
+  <div class="screen active" id="screen-start">
+    <span class="cat-emoji">🐱</span>
+    <div class="title">냥이의 생선을 찾아라!</div>
+    <div class="subtitle">혜화 야외 방탈출<br>키트 안의 시작 코드를 입력해주세요</div>
+    <input type="password" id="password-input" placeholder="시작 코드 입력" maxlength="10">
+    <div class="feedback wrong" id="password-feedback"></div>
+    <button class="btn btn-primary" onclick="checkPassword()">🐾 시작하기</button>
+  </div>
+
+  <!-- 스토리 화면 -->
+  <div class="screen" id="screen-story">
+    <span class="cat-emoji">😿</span>
+    <div class="title">냥이의 SOS!</div>
+    <div class="paw-divider">🐾 🐾 🐾</div>
+    <div class="story-text">냥이의 소중한 생선 15마리가
+혜화 곳곳에 숨겨졌어요!
+
+누군가 냥이의 생선을 훔쳐간 것 같아요.
+혜화 골목을 돌아다니며 단서를 찾고
+생선들을 되찾아 주세요! 🐟
+
+냥이가 기다리고 있어요!</div>
+    <button class="btn btn-primary" onclick="showQuestion(0)">🐟 수사 시작하기</button>
+  </div>
+
+  <!-- 문제 화면 -->
+  <div class="screen" id="screen-question">
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+    <div class="progress-label" id="progress-label"></div>
+
+    <div class="question-number" id="question-number"></div>
+    <div class="question-text" id="question-text"></div>
+
+    <input type="text" id="answer-input" placeholder="정답 입력">
+    <div class="feedback" id="answer-feedback"></div>
+
+    <button class="btn btn-primary" onclick="checkAnswer()">🐾 제출하기</button>
+
+    <div class="hint-box" id="hint-box">
+      💡 <span id="hint-text"></span>
+    </div>
+
+    <button class="btn btn-hint" id="btn-hint" onclick="showHint()">힌트 보기</button>
+
+    <div class="answer-box" id="answer-box">
+      <strong id="answer-text-display"></strong>
+      <span id="answer-explanation"></span>
+    </div>
+
+    <button class="btn btn-answer" id="btn-show-answer" style="display:none" onclick="showAnswerReveal()">정답 보기</button>
+
+    <button class="btn btn-next" id="btn-next" style="display:none" onclick="nextQuestion()">다음 문제로 → 🐟</button>
+  </div>
+
+  <!-- 엔딩 화면 -->
+  <div class="screen" id="screen-ending">
+    <span class="cat-emoji">😸</span>
+    <div class="ending-title">생선을 모두 찾았어요!</div>
+    <div class="fish-count" id="fish-count"></div>
+    <div class="paw-divider">🐾 🐾 🐾</div>
+    <div class="ending-text">냥이의 생선 15마리를 모두 되찾았어요!<br>
+냥이가 너무너무 기뻐하고 있어요 😸<br><br>
+혜화 구석구석을 누빈 여러분,<br>
+최고의 탐정이에요! 🎉</div>
+    <button class="btn btn-primary" onclick="restart()">🔄 처음부터 다시하기</button>
+  </div>
+</div>
+
+<script>
+  // ✏️ 비밀번호
+  const PASSWORD = "1234";
+
+  // ✏️ 문제 데이터 (여기에 실제 문제를 채워주세요!)
+  const questions = [
+    {
+      question: "문제 1\n\n[여기에 첫 번째 문제를 입력하세요]",
+      answer: "정답1",
+      hint: "첫 번째 힌트를 입력하세요",
+      explanation: "풀이: 첫 번째 문제 풀이를 입력하세요"
+    },
+    {
+      question: "문제 2\n\n[여기에 두 번째 문제를 입력하세요]",
+      answer: "정답2",
+      hint: "두 번째 힌트를 입력하세요",
+      explanation: "풀이: 두 번째 문제 풀이를 입력하세요"
+    },
+    {
+      question: "문제 3\n\n[여기에 세 번째 문제를 입력하세요]",
+      answer: "정답3",
+      hint: "세 번째 힌트를 입력하세요",
+      explanation: "풀이: 세 번째 문제 풀이를 입력하세요"
+    },
+    {
+      question: "문제 4\n\n[여기에 네 번째 문제를 입력하세요]",
+      answer: "정답4",
+      hint: "네 번째 힌트를 입력하세요",
+      explanation: "풀이: 네 번째 문제 풀이를 입력하세요"
+    },
+    {
+      question: "문제 5\n\n[여기에 다섯 번째 문제를 입력하세요]",
+      answer: "정답5",
+      hint: "다섯 번째 힌트를 입력하세요",
+      explanation: "풀이: 다섯 번째 문제 풀이를 입력하세요"
+    },
+    {
+      question: "문제 6\n\n[여기에 여섯 번째 문제를 입력하세요]",
+      answer: "정답6",
+      hint: "여섯 번째 힌트를 입력하세요",
+      explanation: "풀이: 여섯 번째 문제 풀이를 입력하세요"
+    },
+    {
+      question: "문제 7\n\n[여기에 일곱 번째 문제를 입력하세요]",
+      answer: "정답7",
+      hint: "일곱 번째 힌트를 입력하세요",
+      explanation: "풀이: 일곱 번째 문제 풀이를 입력하세요"
+    },
+    {
+      question: "문제 8\n\n[여기에 여덟 번째 문제를 입력하세요]",
+      answer: "정답8",
+      hint: "여덟 번째 힌트를 입력하세요",
+      explanation: "풀이: 여덟 번째 문제 풀이를 입력하세요"
+    },
+    {
+      question: "문제 9\n\n[여기에 아홉 번째 문제를 입력하세요]",
+      answer: "정답9",
+      hint: "아홉 번째 힌트를 입력하세요",
+      explanation: "풀이: 아홉 번째 문제 풀이를 입력하세요"
+    },
+    {
+      question: "문제 10\n\n[여기에 열 번째 문제를 입력하세요]",
+      answer: "정답10",
+      hint: "열 번째 힌트를 입력하세요",
+      explanation: "풀이: 열 번째 문제 풀이를 입력하세요"
+    },
+    {
+      question: "문제 11\n\n[여기에 열한 번째 문제를 입력하세요]",
+      answer: "정답11",
+      hint: "열한 번째 힌트를 입력하세요",
+      explanation: "풀이: 열한 번째 문제 풀이를 입력하세요"
+    },
+    {
+      question: "문제 12\n\n[여기에 열두 번째 문제를 입력하세요]",
+      answer: "정답12",
+      hint: "열두 번째 힌트를 입력하세요",
+      explanation: "풀이: 열두 번째 문제 풀이를 입력하세요"
+    },
+    {
+      question: "문제 13\n\n[여기에 열세 번째 문제를 입력하세요]",
+      answer: "정답13",
+      hint: "열세 번째 힌트를 입력하세요",
+      explanation: "풀이: 열세 번째 문제 풀이를 입력하세요"
+    },
+    {
+      question: "문제 14\n\n[여기에 열네 번째 문제를 입력하세요]",
+      answer: "정답14",
+      hint: "열네 번째 힌트를 입력하세요",
+      explanation: "풀이: 열네 번째 문제 풀이를 입력하세요"
+    },
+    {
+      question: "문제 15\n\n[여기에 열다섯 번째 문제를 입력하세요]",
+      answer: "정답15",
+      hint: "열다섯 번째 힌트를 입력하세요",
+      explanation: "풀이: 열다섯 번째 문제 풀이를 입력하세요"
+    }
+  ];
+
+  let currentIndex = 0;
+  let hintShown = false;
+
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+  }
+
+  function checkPassword() {
+    const val = document.getElementById('password-input').value.trim();
+    if (val === PASSWORD) {
+      showScreen('screen-story');
+    } else {
+      document.getElementById('password-feedback').textContent = "코드가 맞지 않아요. 다시 확인해주세요!";
+    }
+  }
+
+  document.getElementById('password-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') checkPassword();
+  });
+
+  function showQuestion(index) {
+    currentIndex = index;
+    hintShown = false;
+    const q = questions[index];
+    const total = questions.length;
+
+    document.getElementById('progress-fill').style.width = ((index / total) * 100) + '%';
+    document.getElementById('progress-label').textContent = `🐟 ${index} / ${total} 생선 발견`;
+    document.getElementById('question-number').textContent = `📍 문제 ${index + 1}`;
+    document.getElementById('question-text').textContent = q.question;
+    document.getElementById('answer-input').value = '';
+    document.getElementById('answer-feedback').textContent = '';
+    document.getElementById('answer-feedback').className = 'feedback';
+
+    document.getElementById('hint-box').classList.remove('show');
+    document.getElementById('hint-text').textContent = q.hint;
+    document.getElementById('answer-box').classList.remove('show');
+    document.getElementById('answer-text-display').textContent = '정답: ' + q.answer;
+    document.getElementById('answer-explanation').textContent = q.explanation;
+
+    document.getElementById('btn-hint').style.display = 'block';
+    document.getElementById('btn-show-answer').style.display = 'none';
+    document.getElementById('btn-next').style.display = 'none';
+    document.getElementById('answer-input').disabled = false;
+
+    showScreen('screen-question');
+    document.getElementById('answer-input').focus();
+  }
+
+  document.getElementById('answer-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') checkAnswer();
+  });
+
+  function checkAnswer() {
+    const val = document.getElementById('answer-input').value.trim().toLowerCase();
+    const correct = questions[currentIndex].answer.toLowerCase();
+    const feedback = document.getElementById('answer-feedback');
+
+    if (val === correct) {
+      feedback.textContent = '정답이에요! 🐟 생선 발견!';
+      feedback.className = 'feedback correct';
+      document.getElementById('btn-hint').style.display = 'none';
+      document.getElementById('btn-show-answer').style.display = 'none';
+      document.getElementById('answer-box').classList.remove('show');
+      document.getElementById('btn-next').style.display = 'block';
+      document.getElementById('answer-input').disabled = true;
+    } else {
+      feedback.textContent = '틀렸어요! 다시 도전해보세요 🙀';
+      feedback.className = 'feedback wrong';
+      if (hintShown) {
+        document.getElementById('btn-show-answer').style.display = 'block';
+      }
+    }
+  }
+
+  function showHint() {
+    hintShown = true;
+    document.getElementById('hint-box').classList.add('show');
+    document.getElementById('btn-hint').style.display = 'none';
+    document.getElementById('btn-show-answer').style.display = 'block';
+  }
+
+  function showAnswerReveal() {
+    document.getElementById('answer-box').classList.add('show');
+    document.getElementById('btn-show-answer').style.display = 'none';
+    // 정답을 봐도 직접 입력해야 다음으로 넘어갈 수 있음
+  }
+
+  function nextQuestion() {
+    if (currentIndex + 1 >= questions.length) {
+      showEnding();
+    } else {
+      showQuestion(currentIndex + 1);
+    }
+  }
+
+  function showEnding() {
+    const fishCount = document.getElementById('fish-count');
+    fishCount.innerHTML = Array(15).fill('🐟').join(' ');
+    document.getElementById('progress-fill').style.width = '100%';
+    showScreen('screen-ending');
+  }
+
+  function restart() {
+    document.getElementById('password-input').value = '';
+    document.getElementById('password-feedback').textContent = '';
+    showScreen('screen-start');
+  }
+</script>
+</body>
+</html>
