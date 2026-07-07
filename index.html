@@ -466,6 +466,23 @@
   let currentIndex = 0;
   let hintShown = false;
 
+  const SAVE_KEY = 'hwacat_save';
+
+  function saveProgress(data) {
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+  }
+
+  function loadProgress() {
+    try {
+      const raw = localStorage.getItem(SAVE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch(e) { return null; }
+  }
+
+  function clearProgress() {
+    localStorage.removeItem(SAVE_KEY);
+  }
+
   function showScreen(id) {
     document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
     document.getElementById(id).classList.add('active');
@@ -474,6 +491,7 @@
   function checkPassword() {
     const val = document.getElementById('password-input').value.trim();
     if (val === PASSWORD) {
+      saveProgress({ authenticated: true, screen: 'story' });
       showScreen('screen-story');
     } else {
       document.getElementById('password-feedback').textContent = "코드가 맞지 않아요. 다시 확인해주세요!";
@@ -487,6 +505,7 @@
   function showQuestion(index) {
     currentIndex = index;
     hintShown = false;
+    saveProgress({ authenticated: true, screen: 'question', index: index });
     const q = questions[index];
     const total = questions.length;
 
@@ -561,6 +580,7 @@
   }
 
   function showEnding() {
+    saveProgress({ authenticated: true, screen: 'ending' });
     const fishCount = document.getElementById('fish-count');
     fishCount.innerHTML = Array(15).fill('🐟').join(' ');
     document.getElementById('progress-fill').style.width = '100%';
@@ -568,10 +588,24 @@
   }
 
   function restart() {
+    clearProgress();
     document.getElementById('password-input').value = '';
     document.getElementById('password-feedback').textContent = '';
     showScreen('screen-start');
   }
+
+  // 페이지 로드 시 저장된 진행 상황 복원
+  (function restoreProgress() {
+    const saved = loadProgress();
+    if (!saved || !saved.authenticated) return;
+    if (saved.screen === 'ending') {
+      showEnding();
+    } else if (saved.screen === 'question' && typeof saved.index === 'number') {
+      showQuestion(saved.index);
+    } else if (saved.screen === 'story') {
+      showScreen('screen-story');
+    }
+  })();
 </script>
 </body>
 </html>
