@@ -328,12 +328,17 @@
     <div class="progress-label" id="progress-label"></div>
 
     <div class="question-number" id="question-number"></div>
-    <div class="question-text" id="question-text"></div>
-
     <input type="text" id="answer-input" placeholder="정답 입력">
     <div class="feedback" id="answer-feedback"></div>
 
     <button class="btn btn-primary" onclick="checkAnswer()">🐾 제출하기</button>
+
+    <button class="btn btn-hint" id="btn-photo" style="display:none" onclick="togglePhoto()">📷 사진 보기</button>
+
+    <div id="question-image-wrap" style="display:none; margin-bottom:10px;">
+      <img id="question-image" src="" alt="문제 이미지"
+        style="width:100%; border-radius:16px; object-fit:cover; max-height:220px; border:2px solid var(--peach);">
+    </div>
 
     <div class="hint-box" id="hint-box">
       💡 <span id="hint-text"></span>
@@ -343,7 +348,6 @@
 
     <div class="answer-box" id="answer-box">
       <strong id="answer-text-display"></strong>
-      <span id="answer-explanation"></span>
     </div>
 
     <button class="btn btn-answer" id="btn-show-answer" style="display:none" onclick="showAnswerReveal()">정답 보기</button>
@@ -372,91 +376,110 @@
   // ✏️ 문제 데이터 (여기에 실제 문제를 채워주세요!)
   const questions = [
     {
-      question: "문제 1\n\n[여기에 첫 번째 문제를 입력하세요]",
-      answer: "정답1",
-      hint: "첫 번째 힌트를 입력하세요",
-      explanation: "풀이: 첫 번째 문제 풀이를 입력하세요"
+      question: "",
+      answer: "CHILDREN",
+      hint: "탈이 백정, 중, 할미, 초랭이, 부네, 각시, 병산1 순서로 전시되어 있습니다.
+책자에 나와있는 알파벳을 위 순서에 맞게 배치해 주세요.",
+      explanation: "풀이: 첫 번째 문제 풀이를 입력하세요",
+      image: "https://picsum.photos/seed/hwa1/600/400"  // 이미지 없으면 "" 로 비워두세요
     },
     {
-      question: "문제 2\n\n[여기에 두 번째 문제를 입력하세요]",
-      answer: "정답2",
-      hint: "두 번째 힌트를 입력하세요",
-      explanation: "풀이: 두 번째 문제 풀이를 입력하세요"
+      question: "",
+      answer: "고구마",
+      hint: "A7은 A열의 7번째 글자를 뜻합니다.",
+      explanation: "풀이: 두 번째 문제 풀이를 입력하세요",
+      image: "https://picsum.photos/seed/hwa2/600/400"  // 이미지 없으면 "" 로 비워두세요 로 비워두세요
     },
     {
-      question: "문제 3\n\n[여기에 세 번째 문제를 입력하세요]",
-      answer: "정답3",
-      hint: "세 번째 힌트를 입력하세요",
-      explanation: "풀이: 세 번째 문제 풀이를 입력하세요"
+      question: "",
+      answer: "SAFE",
+      hint: "책자와 표지판을 비교해가며
+책자의 각 줄마다 표지판과 알맞은 곳의 알파벳을 하나씩 선택해 주세요.
+(표지판 첫 번째 줄은 양쪽 모두 빨간 줄이 없습니다.
+책자 첫 번째 줄은 왼쪽만 빨간 줄이 없습니다.
+표지판과 동일한 왼쪽 S를 선택합니다.)",
+      explanation: "풀이: 세 번째 문제 풀이를 입력하세요",
+      image: "https://picsum.photos/seed/hwa3/600/400"  // 이미지 없으면 "" 로 비워두세요 로 비워두세요
     },
     {
-      question: "문제 4\n\n[여기에 네 번째 문제를 입력하세요]",
+      question: "",
       answer: "정답4",
       hint: "네 번째 힌트를 입력하세요",
-      explanation: "풀이: 네 번째 문제 풀이를 입력하세요"
+      explanation: "풀이: 네 번째 문제 풀이를 입력하세요",
+      image: "https://picsum.photos/seed/hwa4/600/400"  // 이미지 없으면 "" 로 비워두세요 로 비워두세요
     },
     {
-      question: "문제 5\n\n[여기에 다섯 번째 문제를 입력하세요]",
+      question: "",
       answer: "정답5",
       hint: "다섯 번째 힌트를 입력하세요",
-      explanation: "풀이: 다섯 번째 문제 풀이를 입력하세요"
+      explanation: "풀이: 다섯 번째 문제 풀이를 입력하세요",
+      image: "https://picsum.photos/seed/hwa5/600/400"  // 이미지 없으면 "" 로 비워두세요 로 비워두세요
     },
     {
-      question: "문제 6\n\n[여기에 여섯 번째 문제를 입력하세요]",
+      question: "",
       answer: "정답6",
       hint: "여섯 번째 힌트를 입력하세요",
-      explanation: "풀이: 여섯 번째 문제 풀이를 입력하세요"
+      explanation: "풀이: 여섯 번째 문제 풀이를 입력하세요",
+      image: "https://picsum.photos/seed/hwa6/600/400"  // 이미지 없으면 "" 로 비워두세요 로 비워두세요
     },
     {
-      question: "문제 7\n\n[여기에 일곱 번째 문제를 입력하세요]",
+      question: "",
       answer: "정답7",
       hint: "일곱 번째 힌트를 입력하세요",
-      explanation: "풀이: 일곱 번째 문제 풀이를 입력하세요"
+      explanation: "풀이: 일곱 번째 문제 풀이를 입력하세요",
+      image: "https://picsum.photos/seed/hwa7/600/400"  // 이미지 없으면 "" 로 비워두세요 로 비워두세요
     },
     {
-      question: "문제 8\n\n[여기에 여덟 번째 문제를 입력하세요]",
+      question: "",
       answer: "정답8",
       hint: "여덟 번째 힌트를 입력하세요",
-      explanation: "풀이: 여덟 번째 문제 풀이를 입력하세요"
+      explanation: "풀이: 여덟 번째 문제 풀이를 입력하세요",
+      image: "https://picsum.photos/seed/hwa8/600/400"  // 이미지 없으면 "" 로 비워두세요 로 비워두세요
     },
     {
-      question: "문제 9\n\n[여기에 아홉 번째 문제를 입력하세요]",
+      question: "",
       answer: "정답9",
       hint: "아홉 번째 힌트를 입력하세요",
-      explanation: "풀이: 아홉 번째 문제 풀이를 입력하세요"
+      explanation: "풀이: 아홉 번째 문제 풀이를 입력하세요",
+      image: "https://picsum.photos/seed/hwa9/600/400"  // 이미지 없으면 "" 로 비워두세요 로 비워두세요
     },
     {
-      question: "문제 10\n\n[여기에 열 번째 문제를 입력하세요]",
+      question: "",
       answer: "정답10",
       hint: "열 번째 힌트를 입력하세요",
-      explanation: "풀이: 열 번째 문제 풀이를 입력하세요"
+      explanation: "풀이: 열 번째 문제 풀이를 입력하세요",
+      image: "https://picsum.photos/seed/hwa10/600/400"  // 이미지 없으면 "" 로 비워두세요 로 비워두세요
     },
     {
-      question: "문제 11\n\n[여기에 열한 번째 문제를 입력하세요]",
+      question: "",
       answer: "정답11",
       hint: "열한 번째 힌트를 입력하세요",
-      explanation: "풀이: 열한 번째 문제 풀이를 입력하세요"
+      explanation: "풀이: 열한 번째 문제 풀이를 입력하세요",
+      image: "https://picsum.photos/seed/hwa11/600/400"  // 이미지 없으면 "" 로 비워두세요 로 비워두세요
     },
     {
-      question: "문제 12\n\n[여기에 열두 번째 문제를 입력하세요]",
+      question: "",
       answer: "정답12",
       hint: "열두 번째 힌트를 입력하세요",
-      explanation: "풀이: 열두 번째 문제 풀이를 입력하세요"
+      explanation: "풀이: 열두 번째 문제 풀이를 입력하세요",
+      image: "https://picsum.photos/seed/hwa12/600/400"  // 이미지 없으면 "" 로 비워두세요 로 비워두세요
     },
     {
-      question: "문제 13\n\n[여기에 열세 번째 문제를 입력하세요]",
+      question: "",
       answer: "정답13",
       hint: "열세 번째 힌트를 입력하세요",
-      explanation: "풀이: 열세 번째 문제 풀이를 입력하세요"
+      explanation: "풀이: 열세 번째 문제 풀이를 입력하세요",
+      image: "https://picsum.photos/seed/hwa13/600/400"  // 이미지 없으면 "" 로 비워두세요 로 비워두세요
     },
     {
-      question: "문제 14\n\n[여기에 열네 번째 문제를 입력하세요]",
+      question: "",
       answer: "정답14",
       hint: "열네 번째 힌트를 입력하세요",
-      explanation: "풀이: 열네 번째 문제 풀이를 입력하세요"
+      explanation: "풀이: 열네 번째 문제 풀이를 입력하세요",
+      image: "https://picsum.photos/seed/hwa14/600/400"  // 이미지 없으면 "" 로 비워두세요 로 비워두세요
     },
     {
-      question: "문제 15\n\n[여기에 열다섯 번째 문제를 입력하세요]",
+      question: "",
       answer: "정답15",
       hint: "열다섯 번째 힌트를 입력하세요",
       explanation: "풀이: 열다섯 번째 문제 풀이를 입력하세요"
@@ -512,16 +535,28 @@
     document.getElementById('progress-fill').style.width = ((index / total) * 100) + '%';
     document.getElementById('progress-label').textContent = `🐟 ${index} / ${total} 생선 발견`;
     document.getElementById('question-number').textContent = `📍 문제 ${index + 1}`;
-    document.getElementById('question-text').textContent = q.question;
     document.getElementById('answer-input').value = '';
     document.getElementById('answer-feedback').textContent = '';
     document.getElementById('answer-feedback').className = 'feedback';
+
+    // 이미지 처리
+    const imgWrap = document.getElementById('question-image-wrap');
+    const imgEl = document.getElementById('question-image');
+    const btnPhoto = document.getElementById('btn-photo');
+    imgWrap.style.display = 'none';
+    if (q.image) {
+      imgEl.src = q.image;
+      btnPhoto.style.display = 'block';
+      btnPhoto.textContent = '📷 사진 보기';
+    } else {
+      imgEl.src = '';
+      btnPhoto.style.display = 'none';
+    }
 
     document.getElementById('hint-box').classList.remove('show');
     document.getElementById('hint-text').textContent = q.hint;
     document.getElementById('answer-box').classList.remove('show');
     document.getElementById('answer-text-display').textContent = '정답: ' + q.answer;
-    document.getElementById('answer-explanation').textContent = q.explanation;
 
     document.getElementById('btn-hint').style.display = 'block';
     document.getElementById('btn-show-answer').style.display = 'none';
@@ -538,10 +573,13 @@
 
   function checkAnswer() {
     const val = document.getElementById('answer-input').value.trim().toLowerCase();
-    const correct = questions[currentIndex].answer.toLowerCase();
+    const q = questions[currentIndex];
+    const answers = Array.isArray(q.answer)
+      ? q.answer.map(a => a.toLowerCase())
+      : [q.answer.toLowerCase()];
     const feedback = document.getElementById('answer-feedback');
 
-    if (val === correct) {
+    if (answers.includes(val)) {
       feedback.textContent = '정답이에요! 🐟 생선 발견!';
       feedback.className = 'feedback correct';
       document.getElementById('btn-hint').style.display = 'none';
@@ -555,6 +593,18 @@
       if (hintShown) {
         document.getElementById('btn-show-answer').style.display = 'block';
       }
+    }
+  }
+
+  function togglePhoto() {
+    const wrap = document.getElementById('question-image-wrap');
+    const btn = document.getElementById('btn-photo');
+    if (wrap.style.display === 'none') {
+      wrap.style.display = 'block';
+      btn.textContent = '📷 사진 닫기';
+    } else {
+      wrap.style.display = 'none';
+      btn.textContent = '📷 사진 보기';
     }
   }
 
