@@ -299,9 +299,9 @@
     <span class="cat-emoji">🐱</span>
     <div class="title">냥이의 생선을 찾아라!</div>
     <div class="subtitle">혜화 야외 방탈출<br>키트 안의 시작 코드를 입력해주세요</div>
-    <input type="password" id="password-input" placeholder="시작 코드 입력" maxlength="10">
+    <input type="text" id="password-input" inputmode="numeric" placeholder="시작 코드 입력" maxlength="10">
     <div class="feedback wrong" id="password-feedback"></div>
-    <button class="btn btn-primary" onclick="checkPassword()">🐾 시작하기</button>
+    <button class="btn btn-primary" id="btn-start">🐾 시작하기</button>
   </div>
 
   <!-- 스토리 화면 -->
@@ -317,7 +317,7 @@
 생선들을 되찾아 주세요! 🐟
 
 냥이가 기다리고 있어요!</div>
-    <button class="btn btn-primary" onclick="showQuestion(0)">🐟 수사 시작하기</button>
+    <button class="btn btn-primary" id="btn-story-start">🐟 수사 시작하기</button>
   </div>
 
   <!-- 문제 화면 -->
@@ -331,9 +331,9 @@
     <input type="text" id="answer-input" placeholder="정답 입력">
     <div class="feedback" id="answer-feedback"></div>
 
-    <button class="btn btn-primary" onclick="checkAnswer()">🐾 제출하기</button>
+    <button class="btn btn-primary" id="btn-submit">🐾 제출하기</button>
 
-    <button class="btn btn-hint" id="btn-photo" style="display:none" onclick="togglePhoto()">📷 사진 보기</button>
+    <button class="btn btn-hint" id="btn-photo" style="display:none">📷 사진 보기</button>
 
     <div id="question-image-wrap" style="display:none; margin-bottom:10px;">
       <img id="question-image" src="" alt="문제 이미지"
@@ -344,15 +344,15 @@
       💡 <span id="hint-text"></span>
     </div>
 
-    <button class="btn btn-hint" id="btn-hint" onclick="showHint()">힌트 보기</button>
+    <button class="btn btn-hint" id="btn-hint">힌트 보기</button>
 
     <div class="answer-box" id="answer-box">
       <strong id="answer-text-display"></strong>
     </div>
 
-    <button class="btn btn-answer" id="btn-show-answer" style="display:none" onclick="showAnswerReveal()">정답 보기</button>
+    <button class="btn btn-answer" id="btn-show-answer" style="display:none">정답 보기</button>
 
-    <button class="btn btn-next" id="btn-next" style="display:none" onclick="nextQuestion()">다음 문제로 → 🐟</button>
+    <button class="btn btn-next" id="btn-next" style="display:none">다음 문제로 → 🐟</button>
   </div>
 
   <!-- 엔딩 화면 -->
@@ -365,7 +365,7 @@
 냥이가 너무너무 기뻐하고 있어요 😸<br><br>
 혜화 구석구석을 누빈 여러분,<br>
 최고의 탐정이에요! 🎉</div>
-    <button class="btn btn-primary" onclick="restart()">🔄 처음부터 다시하기</button>
+    <button class="btn btn-primary" id="btn-restart">🔄 처음부터 다시하기</button>
   </div>
 </div>
 
@@ -378,8 +378,7 @@
     {
       question: "",
       answer: "CHILDREN",
-      hint: "탈이 백정, 중, 할미, 초랭이, 부네, 각시, 병산1 순서로 전시되어 있습니다.
-책자에 나와있는 알파벳을 위 순서에 맞게 배치해 주세요.",
+      hint: "탈이 백정, 중, 할미, 초랭이, 부네, 각시, 병산1 순서로 전시되어 있습니다.\n책자에 나와있는 알파벳을 위 순서에 맞게 배치해 주세요.",
       explanation: "풀이: 첫 번째 문제 풀이를 입력하세요",
       image: "https://picsum.photos/seed/hwa1/600/400"  // 이미지 없으면 "" 로 비워두세요
     },
@@ -393,11 +392,7 @@
     {
       question: "",
       answer: "SAFE",
-      hint: "책자와 표지판을 비교해가며
-책자의 각 줄마다 표지판과 알맞은 곳의 알파벳을 하나씩 선택해 주세요.
-(표지판 첫 번째 줄은 양쪽 모두 빨간 줄이 없습니다.
-책자 첫 번째 줄은 왼쪽만 빨간 줄이 없습니다.
-표지판과 동일한 왼쪽 S를 선택합니다.)",
+      hint: "책자와 표지판을 비교해가며\n책자의 각 줄마다 표지판과 알맞은 곳의 알파벳을 하나씩 선택해 주세요.\n(표지판 첫 번째 줄은 양쪽 모두 빨간 줄이 없습니다.\n책자 첫 번째 줄은 왼쪽만 빨간 줄이 없습니다.\n표지판과 동일한 왼쪽 S를 선택합니다.)",
       explanation: "풀이: 세 번째 문제 풀이를 입력하세요",
       image: "https://picsum.photos/seed/hwa3/600/400"  // 이미지 없으면 "" 로 비워두세요 로 비워두세요
     },
@@ -643,6 +638,18 @@
     document.getElementById('password-feedback').textContent = '';
     showScreen('screen-start');
   }
+
+  // 이벤트 리스너 연결
+  window.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('btn-start') && document.getElementById('btn-start').addEventListener('click', checkPassword);
+    document.getElementById('btn-story-start') && document.getElementById('btn-story-start').addEventListener('click', function(){ showQuestion(0); });
+    document.getElementById('btn-submit') && document.getElementById('btn-submit').addEventListener('click', checkAnswer);
+    document.getElementById('btn-photo') && document.getElementById('btn-photo').addEventListener('click', togglePhoto);
+    document.getElementById('btn-hint') && document.getElementById('btn-hint').addEventListener('click', showHint);
+    document.getElementById('btn-show-answer') && document.getElementById('btn-show-answer').addEventListener('click', showAnswerReveal);
+    document.getElementById('btn-next') && document.getElementById('btn-next').addEventListener('click', nextQuestion);
+    document.getElementById('btn-restart') && document.getElementById('btn-restart').addEventListener('click', restart);
+  });
 
   // 페이지 로드 시 저장된 진행 상황 복원
   (function restoreProgress() {
